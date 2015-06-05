@@ -22,6 +22,10 @@ class ToDo
     p.done = true
     p.save
   end
+
+  def list
+    list =[]
+    p = Item.where(done: true).pluck(:todo)
 end
 
 todo  = ToDo.new
@@ -36,7 +40,11 @@ elsif command == 'due'
 elsif command == 'done'
   item = ARGV.first
   todo.add_done item
+elsif command == 'list'
+  puts "All of your todo's are: #{todo.list.join}"
 else
-  puts "Command I know are \n add [list_name] [todo_item]\n
-            due [item] [time - year, month, day]\n"
+  puts "Commands I know are \n add [list_name] [todo_item]\n
+            due [item] [time - year, month, day]\n
+            done [item]\n"
+end
 end
