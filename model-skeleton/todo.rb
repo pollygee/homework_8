@@ -8,6 +8,7 @@ class ToDo
   def add_item new_list_name, new_todo_item
     list = List.where(list_name: new_list_name).first_or_create!
     item = Item.where(list_id: list.id, todo: new_todo_item).first_or_create!
+    puts "Your task #{new_todo_item} was added to #{new_list_name}"
   end
 
   def add_due_date item, date
@@ -15,25 +16,26 @@ class ToDo
     p = Item.where(todo: item).first
     p.due_date = date
     p.save
+    puts "Your due date #{date} was added to #{item}"
   end
 
   def add_done item
     p = Item.where(todo: item).first
     p.done = true
     p.save
+    puts "Your task #{item} was marked as done"
   end
 
   def list *option
-    if option == 'all'
-      p = Items.all #need to somehow mark done items as done
-    elsif option
-      binding.pry
-      p = Item.where(name: option.first, done: true).pluck(:todo)
+    if option[0] == 'all'
+      p = Item.all.pluck(:todo) #need to somehow mark done items as done
+    elsif !option[0].nil?
+      p = Item.where(name: option.first)
+      p = Item.where(done: nil).pluck(:todo)
     else
-      p = Item.where(done: true).pluck(:todo)
+      p = Item.where(done: nil).pluck(:todo)
     end
-    p.save
-    return p.join
+    return p.join(", ")
   end
 end
 
@@ -51,18 +53,16 @@ elsif command == 'done'
   todo.add_done item
 elsif command == 'list'
   if ARGV 
-    option = ARGV
-  end
-  if option 
+    option = ARGV.first
     list = todo.list option
   else
     list = todo.list
-    puts "All of your todo's are: #{list}"
   end
+  puts "Things to do: #{list}"
+
 else
-  puts "Commands I know are \n add [list_name] [todo_item]\n
-            due [item] [time - year, month, day]\n
-            done [item]\n"
+  puts "Commands I know are \nadd [list_name] [todo_item]\ndue [item] [time - year, month, day]\n
+done [item]\n"
 end
 
 
