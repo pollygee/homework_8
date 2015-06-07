@@ -45,9 +45,16 @@ class ToDo
   def next
     p = Item.where(done: nil)
     if  Item.where("due_date IS NOT NULL")
-      p = p.where("due_date IS NOT NULL").pluck(:todo).sample
+      p.where("due_date IS NOT NULL").pluck(:todo).sample
     else
-      p = p.pluck(:todo).sample
+      p.pluck(:todo).sample
+    end
+  end
+
+  def search term
+    p = Item.where("todo LIKE ?", "%#{term}%").pluck(:todo)
+    if p
+      puts "Items with #{term} in it are: #{p.join(", ")}"
     end
   end
 end
@@ -72,7 +79,9 @@ elsif command == 'list'
     list = todo.list
   end
 elsif command == 'next'
-    list = todo.next
+  list = todo.next
+elsif command == 'search'
+  todo.search ARGV.shift
 else
   puts "Commands I know are \nadd [list_name] [todo_item]\ndue [item] [time - year, month, day]\ndone [item]\n"
 end
