@@ -28,7 +28,11 @@ class ToDo
 
   def list *option
     if option[0] == 'all'
-      p = Item.all.pluck(:todo) #need to somehow mark done items as done
+      p = Item.where(done: nil).pluck(:todo)
+      q = Item.where(done: true).pluck(:todo)
+      q.each do |t|
+        p << "#{t} (done)"
+      end
     elsif !option[0].nil?
       p = Item.where(name: option.first)
       p = Item.where(done: nil).pluck(:todo)
