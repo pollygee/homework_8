@@ -23,9 +23,18 @@ class ToDo
     p.save
   end
 
-  def list
-    list =[]
-    p = Item.where(done: true).pluck(:todo)
+  def list *option
+    if option == 'all'
+      p = Items.all #need to somehow mark done items as done
+    elsif option
+      binding.pry
+      p = Item.where(name: option.first, done: true).pluck(:todo)
+    else
+      p = Item.where(done: true).pluck(:todo)
+    end
+    p.save
+    return p.join
+  end
 end
 
 todo  = ToDo.new
@@ -41,10 +50,20 @@ elsif command == 'done'
   item = ARGV.first
   todo.add_done item
 elsif command == 'list'
-  puts "All of your todo's are: #{todo.list.join}"
+  if ARGV 
+    option = ARGV
+  end
+  if option 
+    list = todo.list option
+  else
+    list = todo.list
+    puts "All of your todo's are: #{list}"
+  end
 else
   puts "Commands I know are \n add [list_name] [todo_item]\n
             due [item] [time - year, month, day]\n
             done [item]\n"
 end
-end
+
+
+
