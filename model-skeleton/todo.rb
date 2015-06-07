@@ -41,6 +41,15 @@ class ToDo
     end
     return p.join(", ")
   end
+
+  def next
+    p = Item.where(done: nil)
+    if  Item.where("due_date IS NOT NULL")
+      p = p.where("due_date IS NOT NULL").pluck(:todo).sample
+    else
+      p = p.pluck(:todo).sample
+    end
+  end
 end
 
 todo  = ToDo.new
@@ -62,12 +71,11 @@ elsif command == 'list'
   else
     list = todo.list
   end
-  puts "Things to do: #{list}"
-
+elsif command == 'next'
+    list = todo.next
 else
-  puts "Commands I know are \nadd [list_name] [todo_item]\ndue [item] [time - year, month, day]\n
-done [item]\n"
+  puts "Commands I know are \nadd [list_name] [todo_item]\ndue [item] [time - year, month, day]\ndone [item]\n"
 end
-
-
-
+if list
+  puts "Things to do: #{list}"
+end
