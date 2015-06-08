@@ -13,10 +13,11 @@ class ToDo
 
   def add_due_date item, date
     date = Date.parse date
-    p = Item.where(todo: item).first
-    p.due_date = date
-    p.save
-    puts "Your due date #{date} was added to #{item}"
+    if p = Item.where(todo: item).first
+      p.due_date = date
+      p.save
+      puts "Your due date #{date} was added to #{item}"
+    end
   end
 
   def add_done item
@@ -28,7 +29,6 @@ class ToDo
 
   def list *option
     if option[0] == 'all'
-      p = Item.where(done: nil).pluck(:todo)
       q = Item.where(done: true).pluck(:todo)
       q.each do |t|
         p << "#{t} (done)"
@@ -83,7 +83,8 @@ elsif command == 'next'
 elsif command == 'search'
   todo.search ARGV.shift
 else
-  puts "Commands I know are \nadd [list_name] [todo_item]\ndue [item] [time - year, month, day]\ndone [item]\n"
+  puts "Commands options are \nadd [list_name] [todo_item]\ndue [item] [time - year, month, day]\ndone [item]
+  list [*list_name][*all (gives all items including done)]\nnext, search ['string to match']"
 end
 if list
   puts "Things to do: #{list}"
